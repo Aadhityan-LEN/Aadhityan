@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AADHITYAN // PORTFOLIO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Bebas+Neue&family=Oxanium:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050507;
+    --near-black: #080b0f;
+    --panel: #0c1018;
+    --panel2: #0f141d;
+    --green: #00ff41;
+    --green-dim: #00b82e;
+    --green-dark: #003310;
+    --cyan: #00e5ff;
+    --cyan-dim: #00a8bc;
+    --amber: #ffb300;
+    --amber-dim: #cc8f00;
+    --red: #ff3c3c;
+    --white: #e8f0e8;
+    --gray: #3a4a3a;
+    --scanline: rgba(0,0,0,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      var(--scanline) 0px,
+      var(--scanline) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* BIOS SCREEN */
+  #bios {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #aaa;
+    overflow: hidden;
+  }
+  #bios .bios-line { opacity: 0; animation: biosAppear 0.05s forwards; }
+  #bios .bios-green { color: var(--green); }
+  #bios .bios-cyan { color: var(--cyan); }
+  #bios .bios-amber { color: var(--amber); }
+  #bios .bios-white { color: #fff; }
+  #bios .bios-bar {
+    display: inline-block;
+    height: 14px; width: 0;
+    background: var(--green);
+    vertical-align: middle;
+    animation: biosBar 1.5s ease-out forwards;
+    animation-delay: 2.2s;
+  }
+  @keyframes biosAppear { to { opacity: 1; } }
+  @keyframes biosBar { to { width: 420px; } }
+  #bios-skip {
+    position: absolute;
+    bottom: 30px; right: 40px;
+    color: #444;
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  #bios-skip:hover { color: var(--green); }
+
+  /* NAVBAR */
+  #navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 48px;
+    background: rgba(8,11,15,0.95);
+    border-bottom: 1px solid var(--green-dim);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Oxanium', sans-serif;
+    font-size: 12px;
+  }
+  .nav-logo {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .nav-sep { color: var(--gray); }
+  .nav-status { color: var(--cyan); font-size: 11px; }
+  .nav-status::before { content: '● '; color: var(--green); animation: blink 1.4s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    color: #556;
+    text-decoration: none;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .nav-link:hover {
+    color: var(--green);
+    border-color: var(--green-dim);
+    background: var(--green-dark);
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  #clock { color: var(--amber); letter-spacing: 1px; }
+  .nav-tag {
+    color: var(--cyan);
+    border: 1px solid var(--cyan-dim);
+    padding: 2px 8px;
+    font-size: 10px;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    padding-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,229,255,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 60%, rgba(0,255,65,0.05) 0%, transparent 60%);
+  }
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+  }
+  .hero-left {
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-tag {
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    font-family: 'Oxanium', sans-serif;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.5s forwards;
+  }
+  .hero-tag::before { content: '> '; color: var(--green); }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 7vw, 100px);
+    line-height: 0.9;
+    color: var(--white);
+    position: relative;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.7s forwards;
+  }
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--cyan);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+  }
+  .glitch::after {
+    color: var(--green);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch1 {
+    0%,90%,100% { transform: none; opacity: 0; }
+    92% { transform: translate(-3px, 1px); opacity: 0.8; }
+    94% { transform: translate(3px, -1px); opacity: 0.8; }
+    96% { transform: none; opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%,88%,100% { transform: none; opacity: 0; }
+    90% { transform: translate(4px, 2px); opacity: 0.7; }
+    93% { transform: translate(-2px, -2px); opacity: 0.7; }
+    95% { transform: none; opacity: 0; }
+  }
+  .hero-subtitle {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(22px, 3vw, 36px);
+    color: var(--green);
+    letter-spacing: 4px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.9s forwards;
+  }
+  .hero-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.1s forwards;
+  }
+  .badge {
+    font-size: 10px;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border: 1px solid;
+  }
+  .badge-green { color: var(--green); border-color: var(--green-dim); background: rgba(0,255,65,0.05); }
+  .badge-cyan { color: var(--cyan); border-color: var(--cyan-dim); background: rgba(0,229,255,0.05); }
+  .badge-amber { color: var(--amber); border-color: var(--amber-dim); background: rgba(255,179,0,0.05); }
+  .hero-cta {
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.6s 1.3s forwards;
+  }
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: #000;
+    font-weight: 700;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  }
+  .btn-primary:hover { background: #00ff88; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,65,0.3); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--cyan-dim);
+  }
+  .btn-ghost:hover { background: rgba(0,229,255,0.08); transform: translateY(-2px); }
+
+  /* HERO TERMINAL */
+  .hero-right {
+    padding: 80px 80px 80px 40px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.5s forwards;
+  }
+  .terminal-window {
+    background: var(--panel);
+    border: 1px solid #1a2a1a;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0,255,65,0.08), 0 0 120px rgba(0,229,255,0.04);
+  }
+  .terminal-bar {
+    background: #0c1a0c;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #1a2a1a;
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-red { background: #ff5f57; }
+  .t-yellow { background: #ffbd2e; }
+  .t-green-dot { background: #28c940; }
+  .terminal-title { margin-left: 8px; font-size: 11px; color: #3a5a3a; }
+  .terminal-body { padding: 20px; min-height: 340px; }
+  .t-line { margin-bottom: 6px; font-size: 13px; }
+  .t-prompt { color: var(--green); }
+  .t-path { color: var(--cyan); }
+  .t-cmd { color: var(--white); }
+  .t-out { color: #6a8a6a; }
+  .t-value { color: var(--amber); }
+  .t-key { color: var(--cyan); }
+  .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--green);
+    vertical-align: text-bottom;
+    animation: blink 0.8s step-end infinite;
+  }
+  #typed-output { display: inline; }
+
+  /* SECTIONS */
+  section {
+    padding: 100px 80px;
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+  .section-num { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--green); letter-spacing: 2px; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    color: var(--white);
+    letter-spacing: 3px;
+  }
+  .section-line { flex: 1; height: 1px; background: linear-gradient(to right, var(--green-dim), transparent); }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--panel);
+    border: 1px solid #1a2a1a;
+    padding: 24px;
+    position: relative;
+    transition: all 0.3s;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--green);
+    transition: height 0.3s;
+  }
+  .skill-card:hover { border-color: var(--green-dim); background: #0c1a0c; transform: translateY(-2px); }
+  .skill-card:hover::before { height: 100%; }
+  .skill-card.cyan-accent::before { background: var(--cyan); }
+  .skill-card.cyan-accent:hover { border-color: var(--cyan-dim); background: #061416; }
+  .skill-card.amber-accent::before { background: var(--amber); }
+  .skill-card.amber-accent:hover { border-color: var(--amber-dim); background: #141008; }
+  .skill-cat {
+    font-family: 'Oxanium', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--green);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .skill-card.cyan-accent .skill-cat { color: var(--cyan); }
+  .skill-card.amber-accent .skill-cat { color: var(--amber); }
+  .skill-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill-tag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #5a7a5a;
+    background: rgba(0,255,65,0.04);
+    border: 1px solid #1a3a1a;
+    padding: 2px 8px;
+  }
+
+  /* CERTS */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 40px;
+  }
+  .cert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 1px solid #151f15;
+    font-size: 11px;
+    color: #7a9a7a;
+    transition: all 0.2s;
+  }
+  .cert-item:hover { border-color: var(--green-dim); color: var(--white); }
+  .cert-icon { color: var(--green); flex-shrink: 0; margin-top: 1px; }
+
+  /* EXPERIENCE */
+  .timeline { position: relative; padding-left: 40px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--green-dim), transparent);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s;
+  }
+  .timeline-item.visible { opacity: 1; transform: none; }
+  .timeline-dot {
+    position: absolute;
+    left: -44px; top: 6px;
+    width: 8px; height: 8px;
+    background: var(--green);
+    border: 2px solid var(--black);
+    box-shadow: 0 0 10px var(--green);
+  }
+  .timeline-date {
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    font-family: 'Oxanium', sans-serif;
+    margin-bottom: 8px;
+  }
+  .timeline-role {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+  .timeline-org {
+    font-size: 12px;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+  .timeline-org span { color: var(--green); }
+  .timeline-body { list-style: none; }
+  .timeline-body li {
+    font-size: 12px;
+    color: #6a8a6a;
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+  }
+  .timeline-body li::before { content: '›'; position: absolute; left: 0; color: var(--green); }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--panel);
+    border: 1px solid #1a2a1a;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--green), var(--cyan));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+  }
+  .project-card:hover { border-color: #2a3a2a; transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .project-card:hover::after { transform: scaleX(1); }
+  .project-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: #1a2a1a;
+    position: absolute;
+    top: 16px; right: 20px;
+    line-height: 1;
+  }
+  .project-year {
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    font-family: 'Oxanium', sans-serif;
+    margin-bottom: 12px;
+  }
+  .project-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.2;
+    max-width: 80%;
+  }
+  .project-desc { font-size: 12px; color: #5a7a6a; line-height: 1.7; margin-bottom: 20px; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .project-tag {
+    font-size: 10px;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border: 1px solid #1a3a2a;
+    color: var(--green);
+  }
+
+  /* ACHIEVEMENTS */
+  .achievements-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .achievement-card {
+    border: 1px solid #1a2a1a;
+    padding: 24px;
+    background: var(--panel);
+    position: relative;
+    overflow: hidden;
+  }
+  .achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--amber), transparent);
+  }
+  .achievement-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .achievement-title { font-size: 12px; color: var(--white); margin-bottom: 4px; }
+  .achievement-sub { font-size: 11px; color: #5a7a5a; }
+
+  /* CONTACT */
+  #contact {
+    background: var(--near-black);
+    border-top: 1px solid #1a2a1a;
+    max-width: 100%;
+    padding: 100px;
+  }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; max-width: 1240px; margin: 0 auto; }
+  .contact-info-block { }
+  .contact-lead {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 4vw, 52px);
+    color: var(--white);
+    letter-spacing: 3px;
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+  .contact-lead span { color: var(--green); }
+  .contact-desc { font-size: 12px; color: #5a7a5a; line-height: 1.8; margin-bottom: 32px; }
+  .contact-links { display: flex; flex-direction: column; gap: 12px; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #6a8a6a;
+    font-size: 12px;
+    padding: 12px 16px;
+    border: 1px solid #1a2a1a;
+    transition: all 0.2s;
+  }
+  .contact-link:hover { color: var(--white); border-color: var(--green-dim); background: rgba(0,255,65,0.04); }
+  .contact-link-icon { color: var(--green); width: 16px; text-align: center; }
+  .contact-link-label { color: #3a5a3a; font-size: 10px; font-family: 'Oxanium', sans-serif; letter-spacing: 1px; margin-right: 8px; }
+
+  /* INTERACTIVE TERMINAL */
+  .contact-terminal .terminal-window { }
+  .contact-terminal .terminal-body {
+    padding: 20px;
+    min-height: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .ct-output { margin-bottom: 4px; font-size: 12px; }
+  .ct-error { color: var(--red); }
+  .ct-success { color: var(--green); }
+  .ct-info { color: var(--cyan); }
+  .ct-neutral { color: #5a7a5a; }
+  .ct-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid #1a2a1a;
+  }
+  .ct-prompt-str { color: var(--green); font-size: 12px; white-space: nowrap; }
+  #ct-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    caret-color: var(--green);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid #0c1a0c;
+    font-size: 10px;
+    color: #2a3a2a;
+    font-family: 'Oxanium', sans-serif;
+    letter-spacing: 2px;
+  }
+  footer span { color: var(--green); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); }
+
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 60px 24px; }
+    section { padding: 60px 24px; }
+    .contact-grid { grid-template-columns: 1fr; }
+    #contact { padding: 60px 24px; }
+    #navbar .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BIOS SCREEN -->
+<div id="bios">
+  <div id="bios-content"></div>
+  <div id="bios-skip">[ PRESS ANY KEY TO SKIP ]</div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-left">
+    <span class="nav-logo">AADHITYAN_Portfolio</span>
+    <span class="nav-sep">//</span>
+    <span class="nav-status">SYSTEM ONLINE</span>
+  </div>
+  <div class="nav-links">
+    <a href="#skills" class="nav-link">./skills</a>
+    <a href="#experience" class="nav-link">./exp</a>
+    <a href="#projects" class="nav-link">./projects</a>
+    <a href="#contact" class="nav-link">./contact</a>
+  </div>
+  <div class="nav-right">
+    <div id="clock">00:00:00</div>
+    <div class="nav-tag">CCNA R&S</div>
+    <div class="nav-tag" style="color:var(--amber);border-color:var(--amber-dim);">TOP 3%</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-left">
+    <div class="hero-tag">CYBERSECURITY &amp; NETWORK SPECIALIST</div>
+    <h1 class="hero-name">
+      <div class="glitch" data-text="AADHITYAN">AADHITYAN</div>
+    </h1>
+    <h1 class="hero-name" style="color: var(--green); font-size: clamp(40px,5vw,72px); letter-spacing: 6px; margin-bottom: 16px;">
+      THIYAGARAJAH
+    </h1>
+    <div class="hero-subtitle">BICT Undergraduate · Network Technology</div>
+    <div class="hero-badges">
+      <span class="badge badge-green">CCNA R&S</span>
+      <span class="badge badge-amber">TOP 3% TRYHACKME</span>
+      <span class="badge badge-cyan">CTF COMPETITOR</span>
+      <span class="badge badge-green">WIZARD 0xA</span>
+      <span class="badge badge-cyan">Cyber Security</span>
+      <span class="badge badge-cyan">Networking</span>
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">./contact_me</a>
+      <a href="#projects" class="btn btn-ghost">./view_projects</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="terminal-window">
+      <div class="terminal-bar">
+        <div class="t-dot t-red"></div>
+        <div class="t-dot t-yellow"></div>
+        <div class="t-dot t-green-dot"></div>
+        <span class="terminal-title">aadhityan@portfolio:~</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">aadhityan</span><span style="color:#3a5a3a">@</span><span class="t-path">kali-linux</span><span style="color:#3a5a3a">:~$ </span><span class="t-cmd">whoami --verbose</span></div>
+        <div class="t-line t-out">╔══════════════════════════════════════╗</div>
+        <div class="t-line"><span class="t-key">  name</span><span style="color:#3a5a3a">:</span> <span class="t-value">"Aadhityan Thiyagarajah"</span></div>
+        <div class="t-line"><span class="t-key">  role</span><span style="color:#3a5a3a">:</span> <span class="t-value">"Cybersecurity & Network Intern Candidate"</span></div>
+        <div class="t-line"><span class="t-key">  rank</span><span style="color:#3a5a3a">:</span> <span class="t-value" style="color:var(--amber)">"0xA [WIZARD] | Top 3%"</span></div>
+        <div class="t-line"><span class="t-key">  location</span><span style="color:#3a5a3a">:</span> <span class="t-value">"Dalugama/Colombo, Sri Lanka"</span></div>
+        <div class="t-line"><span class="t-key">  labs</span><span style="color:#3a5a3a">:</span> <span class="t-value" style="color:var(--cyan)">100+</span></div>
+        <div class="t-line t-out">╚══════════════════════════════════════╝</div>
+        <div class="t-line" style="margin-top:8px"><span class="t-prompt">aadhityan</span><span style="color:#3a5a3a">@</span><span class="t-path">kali-linux</span><span style="color:#3a5a3a">:~$ </span><span class="t-cmd">cat mission.txt</span></div>
+        <div class="t-line" id="typed-output" style="color:#6a9a6a;font-size:12px;line-height:1.6;max-width:420px;"></div>
+        <div class="t-line" style="margin-top:8px"><span class="t-prompt">aadhityan</span><span style="color:#3a5a3a">@</span><span class="t-path">kali-linux</span><span style="color:#3a5a3a">:~$ </span><span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-header">
+    <span class="section-num">01 //</span>
+    <h2 class="section-title">TECHNICAL ARSENAL</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-cat">// Networking & Infrastructure</div>
+      <div class="skill-name">NETWORK ENGINEERING</div>
+      <div class="skill-tags">
+        <span class="skill-tag">OSPF</span>
+        <span class="skill-tag">EIGRP</span>
+        <span class="skill-tag">RIP</span>
+        <span class="skill-tag">STP</span>
+        <span class="skill-tag">EtherChannel</span>
+        <span class="skill-tag">LACP/PAgP</span>
+        <span class="skill-tag">VLANs</span>
+        <span class="skill-tag">ROAS</span>
+        <span class="skill-tag">TCP/IP</span>
+        <span class="skill-tag">DNS</span>
+        <span class="skill-tag">DHCP</span>
+        <span class="skill-tag">Subnetting</span>
+      </div>
+    </div>
+    <div class="skill-card cyan-accent">
+      <div class="skill-cat">// Cybersecurity</div>
+      <div class="skill-name">OFFENSIVE SECURITY</div>
+      <div class="skill-tags">
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Penetration Testing</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Web Exploitation</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Priv Escalation</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Recon & Enum</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Wi-Fi Security</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Vuln Assessment</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">CTF Challenges</span>
+        <span class="skill-tag" style="color:var(--cyan);border-color:#1a3a4a;background:rgba(0,229,255,0.04)">Net Hardening</span>
+      </div>
+    </div>
+    <div class="skill-card amber-accent">
+      <div class="skill-cat">// Programming & Automation</div>
+      <div class="skill-name">CODE & AUTOMATION</div>
+      <div class="skill-tags">
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">Python</span>
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">Bash/Shell</span>
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">Security Automation</span>
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">Linux Admin</span>
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">ESP32/Arduino</span>
+        <span class="skill-tag" style="color:var(--amber);border-color:#3a2a1a;background:rgba(255,179,0,0.04)">Git</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-cat">// Tools & Platforms</div>
+      <div class="skill-name">TOOLING</div>
+      <div class="skill-tags">
+        <span class="skill-tag">TryHackMe</span>
+        <span class="skill-tag">Wireshark</span>
+        <span class="skill-tag">Cisco Packet Tracer</span>
+        <span class="skill-tag">Kali Linux</span>
+        <span class="skill-tag">Ubuntu</span>
+        <span class="skill-tag">Nmap</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATIONS -->
+  <div class="section-header" style="margin-top:60px;margin-bottom:20px;">
+    <span class="section-num" style="font-size:11px;">CERTIFICATIONS //</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="certs-grid">
+    <div class="cert-item"><span class="cert-icon">▸</span> Introduction to Cybersecurity — Cisco</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Cyber Security 101 — TryHackMe</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Linux Essentials Certification</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Multicloud Network Associate</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Intro to Telecommunications</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Ethical Hacking</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> Critical Infrastructure Protection</div>
+    <div class="cert-item"><span class="cert-icon">▸</span> CCNA R&S — Cisco / Univ. Moratuwa</div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience" style="background: var(--near-black); max-width:100%; padding: 100px;">
+  <div style="max-width:1240px; margin:0 auto;">
+  <div class="section-header">
+    <span class="section-num">02 //</span>
+    <h2 class="section-title">EXPERIENCE LOG</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">FEB 2025 — PRESENT</div>
+      <div class="timeline-role">CYBERSECURITY PRACTITIONER</div>
+      <div class="timeline-org"><span>TryHackMe</span> · Rank: 0xA [WIZARD] · Top 3% Global</div>
+      <ul class="timeline-body">
+        <li>100+ cybersecurity labs covering web exploitation, privilege escalation, and network security analysis</li>
+        <li>Penetration testing: recon, enumeration, exploitation, post-exploitation, Linux, and network traffic analysis</li>
+        <li>Achieved Top 3% ranking among 3M+ users worldwide</li>
+      </ul>
+    </div>
+    <div class="timeline-item" style="transition-delay:0.15s">
+      <div class="timeline-dot" style="background:var(--cyan);box-shadow:0 0 10px var(--cyan);"></div>
+      <div class="timeline-date" style="color:var(--cyan)">DEC 2024 — DEC 2025</div>
+      <div class="timeline-role">MEMBER, DEVELOPMENT &amp; TRAINING TEAM</div>
+      <div class="timeline-org"><span style="color:var(--cyan)">UOK ISACA Student Group</span> · University of Kelaniya</div>
+      <ul class="timeline-body">
+        <li>Planned and executed cybersecurity workshops and awareness events for 50+ student participants</li>
+        <li>Organized training sessions on information security fundamentals and emerging cyber threats</li>
+        <li>Facilitated collaborative learning, driving participant engagement across the student community</li>
+        <li>Contributed to professional development programs aligned with ISACA frameworks</li>
+      </ul>
+    </div>
+    <div class="timeline-item" style="transition-delay:0.3s">
+      <div class="timeline-dot" style="background:var(--amber);box-shadow:0 0 10px var(--amber);"></div>
+      <div class="timeline-date" style="color:var(--amber)">SEP 2023 — PRESENT</div>
+      <div class="timeline-role">BICT UNDERGRADUATE</div>
+      <div class="timeline-org"><span style="color:var(--amber)">University of Kelaniya</span> · Network Technology</div>
+      <ul class="timeline-body">
+        <li>Specializing in Network Technology within the BICT program (expected graduation 2027)</li>
+        <li>CCNA Routing & Switching training via University of Moratuwa (Dec 2024 – Aug 2025)</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <span class="section-num">03 //</span>
+    <h2 class="section-title">PROJECT DIRECTORY</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-num">01</div>
+      <div class="project-year">2025</div>
+      <div class="project-title">ESP32 BLE KEYSTROKE INJECTION HID Attack Simulation & Prevention system</div>
+      <div class="project-desc">Proof-of-concept BLE HID attack simulation using ESP32 to demonstrate keystroke injection risks. Researched and documented mitigation strategies for wireless and IoT security vulnerabilities.</div>
+      <div class="project-tags">
+        <span class="project-tag">ESP32</span>
+        <span class="project-tag">BLE/HID</span>
+        <span class="project-tag">IoT Security</span>
+        <span class="project-tag">HW Hacking</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">02</div>
+      <div class="project-year">2024</div>
+      <div class="project-title">ECO TRANSPORT TICKETING SYSTEM</div>
+      <div class="project-desc">Real-time ticketing and GPS tracking system for sustainable public transportation. Integrated backend automation, user-facing dashboards, secure data handling, and network communication protocols.</div>
+      <div class="project-tags">
+        <span class="project-tag">GPS Tracking</span>
+        <span class="project-tag">Backend</span>
+        <span class="project-tag">Dashboard</span>
+        <span class="project-tag">Secure Comms</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACHIEVEMENTS -->
+  <div class="section-header" style="margin-top:60px;margin-bottom:24px;">
+    <span class="section-num" style="font-size:11px;">ACHIEVEMENTS //</span>
+    <div class="section-line"></div>
+  </div>
+  <div class="achievements-row">
+    <div class="achievement-card">
+      <div class="achievement-rank">2ND</div>
+      <div class="achievement-title">Runner-Up — CyberZee Quiz Competition</div>
+      <div class="achievement-sub">Cybersecurity Knowledge & Threat Analysis</div>
+    </div>
+    <div class="achievement-card" style="border-color:#2a2a1a;">
+      <div class="achievement-rank" style="color:var(--green);">TOP 3%</div>
+      <div class="achievement-title">TryHackMe Global Ranking</div>
+      <div class="achievement-sub">Among 3M+ users worldwide · Rank 0xA [WIZARD]</div>
+    </div>
+    <div class="achievement-card" style="border-color:#1a2a3a;">
+      <div class="achievement-rank" style="color:var(--cyan);">CCNA</div>
+      <div class="achievement-title">Cisco Certified Network Associate</div>
+      <div class="achievement-sub">R&S · Via University of Moratuwa · Cisco-accredited</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div id="contact">
+  <div style="max-width:1240px;margin:0 auto;">
+  <div class="section-header">
+    <span class="section-num">04 //</span>
+    <h2 class="section-title">ESTABLISH CONNECTION</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info-block">
+      <div class="contact-lead">OPEN TO<br><span>OPPORTUNITIES</span></div>
+      <div class="contact-desc">Actively seeking internship roles in cybersecurity, networking, or telecommunications. Bringing hands-on labs, CCNA knowledge, and a relentless hacker mindset to your team.</div>
+      <div class="contact-links">
+        <a href="mailto:aadhityanlen@gmail.com" class="contact-link">
+          <span class="contact-link-icon">@</span>
+          <span class="contact-link-label">EMAIL</span>
+          aadhityanlen@gmail.com
+        </a>
+        <a href="tel:+94076853746" class="contact-link">
+          <span class="contact-link-icon">#</span>
+          <span class="contact-link-label">PHONE</span>
+          +94 076 203 4686
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">⌂</span>
+          <span class="contact-link-label">LOCATION</span>
+          Dalugama / Colombo, Sri Lanka
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">in</span>
+          <span class="contact-link-label">LINKEDIN</span>
+          www.linkedin.com/in/aadhityan
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">⌥</span>
+          <span class="contact-link-label">GITHUB</span>
+          https://github.com/Aadhityan-LEN
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">◈</span>
+          <span class="contact-link-label">TRYHACKME</span>
+          Top 3% · 0xA [WIZARD]
+        </a>
+      </div>
+    </div>
+    <div class="contact-terminal">
+      <div class="terminal-window">
+        <div class="terminal-bar">
+          <div class="t-dot t-red"></div>
+          <div class="t-dot t-yellow"></div>
+          <div class="t-dot t-green-dot"></div>
+          <span class="terminal-title">contact_terminal — bash</span>
+        </div>
+        <div class="terminal-body" id="ct-body">
+          <div class="ct-output ct-info">// Interactive terminal. Type 'help' for commands.</div>
+          <div class="ct-output ct-neutral">Initializing secure channel...</div>
+          <div class="ct-output ct-success">✓ Connection established.</div>
+          <div class="ct-output" style="margin-top:8px;color:#3a5a3a;">─────────────────────────────────</div>
+        </div>
+        <div class="ct-input-row">
+          <span class="ct-prompt-str">visitor@portfolio:~$ </span>
+          <input type="text" id="ct-input" placeholder="type a command..." autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<footer>
+  <span>AADHITYAN THIYAGARAJAH</span> // PORTFOLIO OS v2.0.25 // ALL SYSTEMS OPERATIONAL
+</footer>
+
+<script>
+// ─── BIOS BOOT ────────────────────────────────────────────────────────────────
+const biosLines = [
+  { text: 'AADHITYAN-BIOS v3.2.1  Copyright (C) 2025', cls: 'bios-white', delay: 0 },
+  { text: 'CPU: NetSec-X9 Penetration Core @ 4.2GHz', cls: '', delay: 80 },
+  { text: 'Memory Test: 8192MB OK', cls: '', delay: 160 },
+  { text: 'Initializing network interfaces... OK', cls: 'bios-green', delay: 240 },
+  { text: '', delay: 300 },
+  { text: 'Detecting hardware:', cls: '', delay: 360 },
+  { text: '  [OK] ESP32 BLE HID Adapter detected', cls: 'bios-green', delay: 440 },
+  { text: '  [OK] Wireshark Packet Engine loaded', cls: 'bios-green', delay: 520 },
+  { text: '  [OK] TryHackMe Cloud Link: RANK 0xA [WIZARD]', cls: 'bios-amber', delay: 620 },
+  { text: '  [OK] Cisco CCNA R&S Module: ACTIVE', cls: 'bios-cyan', delay: 700 },
+  { text: '', delay: 760 },
+  { text: 'Scanning skill matrix...', cls: '', delay: 820 },
+  { text: '  > Python scripting engine......... LOADED', cls: 'bios-green', delay: 900 },
+  { text: '  > OSPF/EIGRP routing protocols.... LOADED', cls: 'bios-green', delay: 960 },
+  { text: '  > Penetration testing toolkit..... LOADED', cls: 'bios-green', delay: 1020 },
+  { text: '  > CTF exploit framework........... LOADED', cls: 'bios-cyan', delay: 1080 },
+  { text: '', delay: 1140 },
+  { text: 'Loading AADHITYAN_Portfolio kernel...', cls: 'bios-amber', delay: 1200 },
+  { text: '', delay: 1280 },
+  { text: 'Booting portfolio subsystems:', cls: '', delay: 1360 },
+  { text: '  ████████████████████████████████  100%', cls: 'bios-green', delay: 2200 },
+  { text: '', delay: 2400 },
+  { text: 'SYSTEM READY. Press any key to continue...', cls: 'bios-white', delay: 2500 },
+];
+
+const biosContent = document.getElementById('bios-content');
+const bios = document.getElementById('bios');
+let biosTimeout;
+let booted = false;
+
+function bootComplete() {
+  if (booted) return;
+  booted = true;
+  bios.style.transition = 'opacity 0.6s';
+  bios.style.opacity = '0';
+  setTimeout(() => { bios.style.display = 'none'; startTyping(); }, 600);
+}
+
+biosLines.forEach((line, i) => {
+  setTimeout(() => {
+    const div = document.createElement('div');
+    div.className = 'bios-line' + (line.cls ? ' ' + line.cls : '');
+    div.textContent = line.text || '\u00A0';
+    biosContent.appendChild(div);
+    div.style.animationDelay = '0s';
+  }, line.delay);
+});
+
+biosTimeout = setTimeout(bootComplete, 3400);
+
+document.addEventListener('keydown', bootComplete);
+document.addEventListener('click', bootComplete);
+document.getElementById('bios-skip').addEventListener('click', bootComplete);
+
+// ─── CLOCK ────────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── TYPING EFFECT ────────────────────────────────────────────────────────────
+function startTyping() {
+  const text = 'Bridging offense & defense — turning packet captures and CTF wins into real-world hardened networks.';
+  const el = document.getElementById('typed-output');
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text[i++];
+      setTimeout(type, 28 + Math.random() * 20);
+    }
+  }
+  setTimeout(type, 800);
+}
+
+// ─── SCROLL ANIMATIONS ────────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
+
+// ─── CONTACT TERMINAL ─────────────────────────────────────────────────────────
+const ctBody = document.getElementById('ct-body');
+const ctInput = document.getElementById('ct-input');
+
+const commands = {
+  help: () => [
+    { text: 'Available commands:', cls: 'ct-info' },
+    { text: '  whoami       — about Aadhityan', cls: 'ct-neutral' },
+    { text: '  skills       — list technical skills', cls: 'ct-neutral' },
+    { text: '  email        — get email address', cls: 'ct-neutral' },
+    { text: '  phone        — get phone number', cls: 'ct-neutral' },
+    { text: '  rank         — TryHackMe status', cls: 'ct-neutral' },
+    { text: '  certs        — list certifications', cls: 'ct-neutral' },
+    { text: '  projects     — show projects', cls: 'ct-neutral' },
+    { text: '  hire me      — why you should hire', cls: 'ct-neutral' },
+    { text: '  clear        — clear terminal', cls: 'ct-neutral' },
+  ],
+  whoami: () => [
+    { text: 'Aadhityan Thiyagarajah', cls: 'ct-success' },
+    { text: '3rd Year BICT Student · Network Technology', cls: 'ct-neutral' },
+    { text: 'University of Kelaniya, Sri Lanka', cls: 'ct-neutral' },
+    { text: 'Internship target: Cybersecurity / Networking / Telecom', cls: 'ct-info' },
+  ],
+  skills: () => [
+    { text: '[NETWORK]  OSPF · EIGRP · RIP · STP · VLANs · ROAS · TCP/IP', cls: 'ct-success' },
+    { text: '[SECURITY] Pentest · Web Exploit · Priv Esc · Wi-Fi · CTF', cls: 'ct-info' },
+    { text: '[CODE]     Python · Bash · Security Automation · Linux Admin', cls: '' },
+    { text: '[TOOLS]    Wireshark · Packet Tracer · Kali · ESP32 · Git', cls: 'ct-neutral' },
+  ],
+  email: () => [{ text: 'aadhityanlen@gmail.com', cls: 'ct-success' }],
+  phone: () => [{ text: '+94 076 853 7746', cls: 'ct-success' }],
+  rank: () => [
+    { text: 'TryHackMe Rank: 0xA [WIZARD]', cls: 'ct-success' },
+    { text: 'Global position: TOP 3% of 3,000,000+ users', cls: 'ct-info' },
+    { text: 'Labs completed: 100+', cls: 'ct-neutral' },
+  ],
+  certs: () => [
+    { text: '✓ Introduction to Cybersecurity — Cisco', cls: 'ct-success' },
+    { text: '✓ Cyber Security 101 — TryHackMe', cls: 'ct-success' },
+    { text: '✓ Linux Essentials Certification', cls: 'ct-success' },
+    { text: '✓ Multicloud Network Associate', cls: 'ct-success' },
+    { text: '✓ Ethical Hacking', cls: 'ct-success' },
+    { text: '✓ CCNA R&S — Cisco/Univ. Moratuwa', cls: 'ct-info' },
+  ],
+  projects: () => [
+    { text: '[1] ESP32 BLE HID Attack Simulation — 2025', cls: 'ct-info' },
+    { text: '    Keystroke injection PoC + mitigation research', cls: 'ct-neutral' },
+    { text: '[2] Eco Transport Ticketing System — 2024', cls: 'ct-info' },
+    { text: '    Real-time GPS + ticketing + secure backend', cls: 'ct-neutral' },
+  ],
+  'hire me': () => [
+    { text: '>> Compiling reasons...', cls: 'ct-neutral' },
+    { text: '✓ Top 3% on TryHackMe (3M+ users)', cls: 'ct-success' },
+    { text: '✓ CCNA certified — real networking fundamentals', cls: 'ct-success' },
+    { text: '✓ CTF competitor — creative problem solver', cls: 'ct-success' },
+    { text: '✓ IoT + HW hacking experience (ESP32)', cls: 'ct-success' },
+    { text: '✓ Strong Python & automation skills', cls: 'ct-success' },
+    { text: '✓ ISACA community — security frameworks', cls: 'ct-success' },
+    { text: '>> Conclusion: HIGH VALUE CANDIDATE', cls: 'ct-info' },
+  ],
+};
+
+function ctPrint(lines) {
+  lines.forEach(l => {
+    const div = document.createElement('div');
+    div.className = 'ct-output ' + (l.cls || '');
+    div.textContent = l.text;
+    ctBody.appendChild(div);
+  });
+  ctBody.scrollTop = ctBody.scrollHeight;
+}
+
+function ctPromptEcho(cmd) {
+  const div = document.createElement('div');
+  div.className = 'ct-output';
+  div.innerHTML = `<span style="color:var(--green)">visitor@portfolio:~$</span> <span style="color:#ccc">${cmd}</span>`;
+  ctBody.appendChild(div);
+}
+
+ctInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const raw = ctInput.value.trim().toLowerCase();
+    ctPromptEcho(ctInput.value.trim());
+    ctInput.value = '';
+    if (!raw) return;
+    if (raw === 'clear') { ctBody.innerHTML = ''; return; }
+    if (commands[raw]) {
+      ctPrint(commands[raw]());
+    } else {
+      ctPrint([{ text: `command not found: ${raw}. Type 'help'.`, cls: 'ct-error' }]);
+    }
+  }
+});
+
+// ─── PARTICLE CURSOR TRAIL ────────────────────────────────────────────────────
+document.addEventListener('mousemove', e => {
+  if (Math.random() > 0.4) return;
+  const dot = document.createElement('div');
+  dot.style.cssText = `
+    position:fixed;left:${e.clientX}px;top:${e.clientY}px;
+    width:3px;height:3px;background:var(--green);
+    border-radius:50%;pointer-events:none;z-index:9998;
+    opacity:0.7;transition:opacity 0.5s,transform 0.5s;
+  `;
+  document.body.appendChild(dot);
+  requestAnimationFrame(() => { dot.style.opacity = '0'; dot.style.transform = 'scale(0)'; });
+  setTimeout(() => dot.remove(), 500);
+});
+</script>
+</body>
+</html>
